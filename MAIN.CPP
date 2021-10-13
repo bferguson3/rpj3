@@ -34,6 +34,8 @@ void DSP_WriteByte(u8 b);
 u8 DSP_ReadByte();
 void FM_RegSelect(u8 b);
 void FM_RegWrite(u8 b);
+void PrintDSPVersion(void);
+
 
 u8 hex2c(u8 c)
 {
@@ -52,18 +54,38 @@ void printVarSizes(void)
 	printf("sizeof((void*)): %d\n", sizeof(void*));
 }
 
+void PrintDSPVersion(void)
+{
+	u8 ma, mi;
+	DSP_WriteByte(DSP_GETVER);
+	ma = DSP_ReadByte();
+	mi = DSP_ReadByte();
+	//printf("Version %d.%d\n", ma, mi);
+	if (ma == 1)
+		printf("Sound Blaster-compatible detected.\n");
+	if (ma == 2)
+		printf("Sound Blaster Pro-compatible detected.\n");
+	if (ma == 3)
+		printf("Sound Blaster 16-compatible detected.\n");
+	if (ma == 4) {
+		if(mi != 5)
+			printf("Sound Blaster AWE32-compatible detected.\n");
+		else 
+			printf("DOSBOS Sound Blaster detected.\n");
+	}
+}
+
 void main(int argc, char* argv[])
 {
 	//printVarSizes();
 	s16 i;
-	u8 ma, mi;
-
+	
 	SB_BASE=0x0;
 	for(i = 0; i < sizeof(argv[1]); i++)
 	{
 		SB_BASE += hex2c(argv[1][i]) * (0x1 << (4*(sizeof(argv[1])-i)));
 	}
-	GetChannelType();
+	//GetChannelType();
 
 	if(ResetDSP() == 0)
 		printf("DSP init OK!\n");
@@ -73,11 +95,7 @@ void main(int argc, char* argv[])
 		return;
 	}
 
-	// Get DSP Version
-	DSP_WriteByte(DSP_GETVER);
-	ma = DSP_ReadByte();
-	mi = DSP_ReadByte();
-	printf("Version %d.%d\n", ma, mi);
+	PrintDSPVersion();
 
 	// Load OPL general midi instrument bank
 	ifstream f;
@@ -89,6 +107,7 @@ void main(int argc, char* argv[])
 	IBKFMT* ibkFile = (IBKFMT*)&ibk[0];
 	
 	// TEST
+	/*
 	FM_RegSelect(0x20);
 	FM_RegWrite(1);
 	FM_RegSelect(0x23);
@@ -109,6 +128,9 @@ void main(int argc, char* argv[])
 	getchar();
 	FM_RegSelect(0xb0);
 	FM_RegWrite(0x0);
+	*/
+	for(i = 62; i < 63; i++)
+		printf("Instrument %d: %s\n", i, ibkFile->name[i]);
 }
 /*
 The groupings of twenty-two registers (20-35, 40-55, etc.) have an odd
@@ -241,7 +263,7 @@ s16 ResetDSP(void)
 	return 0;
 
 	_notok:
-	printf("Could not initialize SB on port %x. Exiting.\n", SB_BASE);
+	printf("Could not initialize SB on port %x.\n", SB_BASE);
 	return 1;
 }
 
@@ -249,7 +271,7 @@ void GetChannelType(void)
 {
 	u8 optype;
 	asm {
-		mov dx,0x388
+		mov dx,SB_FMADDRESS
 		in al,dx
 		mov [optype],al
 	}
