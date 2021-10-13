@@ -3,6 +3,8 @@
 `GMOPL.IBK` -
 General MIDI compatible OPL2 instrument bank<br>
 (format: https://moddingwiki.shikadi.net/wiki/IBK_Format )<br>
+`ibk.zip` - various IBK files<br>
+(source: http://www.midiox.com/index.htm?http://www.midiox.com/jsoft.htm )<br>
 `MAIN.CPP` - 
 main code file<br>
 `IBK.H` - 

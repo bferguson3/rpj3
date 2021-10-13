@@ -107,7 +107,7 @@ void main(int argc, char* argv[])
 	IBKFMT* ibkFile = (IBKFMT*)&ibk[0];
 	
 	// TEST
-	/*
+	
 	FM_RegSelect(0x20);
 	FM_RegWrite(1);
 	FM_RegSelect(0x23);
@@ -128,7 +128,7 @@ void main(int argc, char* argv[])
 	getchar();
 	FM_RegSelect(0xb0);
 	FM_RegWrite(0x0);
-	*/
+	
 	for(i = 62; i < 63; i++)
 		printf("Instrument %d: %s\n", i, ibkFile->name[i]);
 }
