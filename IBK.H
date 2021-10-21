@@ -20,26 +20,26 @@ typedef char BYTE;
 /* Packed Timbre Parameters */
 
 typedef struct {        /* 16 Bytes each */
-	BYTE modchar;   /* AM, VIB, SUS, KSR, MUL 0x20 */
-	BYTE carchar;   // 0x23
-	BYTE modscal;   /* KSL, TL 0x40 */
-	BYTE carscal;   // 0x43
-	BYTE modad;     /* Attack/Decay 0x60 */
-	BYTE carad;     // 0x63
-	BYTE modsr;     /* Sustain/Release 0x80 */
-	BYTE carsr;     // 0x83
-	BYTE modwave;   /* Wave Select 0xe0 */
-	BYTE carwave;   // 0xe3
-    BYTE feedback;  /* FB, Connection *(inverse of Adlib)* <- not true? */
-                    /* The following was originally reserved...CL uses  */
-                    /* the next byte the same way we do: BD=6,SD=7,TT=8 */
-                    /* CY=9,HH=10                                       */
-                    // 0xc0+
-    BYTE percvoc;   /* Percussion voice number                    : JWO */
-    char transpos;  /* Number of notes to transpose timbre, signed: JWO */
-    BYTE dpitch;    /* percussion pitch: MIDI Note 0 - 127        : JWO */
-    BYTE rsv[2];    /* unsused - so far */
-    } SBTIMBRE;     
+        BYTE modchar;   /* AM, VIB, SUS, KSR, MUL 0x20 */
+        BYTE carchar;   // 0x23
+        BYTE modscal;   /* KSL, TL 0x40 */
+        BYTE carscal;   // 0x43
+        BYTE modad;     /* Attack/Decay 0x60 */
+        BYTE carad;     // 0x63
+        BYTE modsr;     /* Sustain/Release 0x80 */
+        BYTE carsr;     // 0x83
+        BYTE modwave;   /* Wave Select 0xe0 */
+        BYTE carwave;   // 0xe3
+        BYTE feedback;  /* FB, Connection *(inverse of Adlib)* <- not true? */
+                        /* The following was originally reserved...CL uses  */
+                        /* the next byte the same way we do: BD=6,SD=7,TT=8 */
+                        /* CY=9,HH=10                                       */
+                        // 0xc0+
+        BYTE percvoc;   /* Percussion voice number                    : JWO */
+        char transpos;  /* Number of notes to transpose timbre, signed: JWO */
+        BYTE dpitch;    /* percussion pitch: MIDI Note 0 - 127        : JWO */
+        BYTE rsv[2];    /* unsused - so far */
+} SBTIMBRE;     
 
 /* SBI Instrument file */
 
@@ -47,7 +47,7 @@ typedef struct {
         char     sig[4];             /* signature: "SBI\x1A"  */
         char     name[32];           /* instrument name: NUL Terminated */
         SBTIMBRE snd;                /* instrument parameters */
-        } SBIFMT;
+} SBIFMT;
 
 /* IBK Instrument Bank File */
 
@@ -55,6 +55,6 @@ typedef struct {                     /* 3204 Bytes (0x0C83) */
         char     sig[4];             /* signature: "IBK\x1A"  */
         SBTIMBRE snd[128];           /* Instrument block */
         char     name[128][9];       /* name block: NUL terminated strings */
-        } IBKFMT;
+} IBKFMT;
 
 #endif
