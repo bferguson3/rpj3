@@ -290,10 +290,19 @@ void main(int argc, char* argv[])
 			else printf("0");
 		}
 		printf("\nFPS: %d",fps);
+		
 		u16 pos = (80*100) + px;
 		
+		if((input1 & BUTTON_RIGHT))
+		{
+			px++;
+			fps++;
+		}
+		if((input1 & BUTTON_LEFT))
+		{
+			px--;
+		}
 		
-		// wait until bit 3 is 0
 		/* 
 		* !!!!!!! DRAW !!!!!
 		*/
@@ -314,23 +323,15 @@ void main(int argc, char* argv[])
 			add di,si
 			loop _meloop
 		} // 170 = 0b10101010
-		if((input1 & BUTTON_RIGHT))
-		{
-			px++;
-			fps++;
-		}
-		if((input1 & BUTTON_LEFT))
-		{
-			px--;
-		}
-		
 		if(px > 79) px = 79;
 		if(px < 0) px = 0;
-		SetVGASegment();
+		
+		//SetVGASegment();
 		SetVGABitmask(0xff); // SET bits of
 		SetVGAPlaneMask(LIGHTMAGENTA); // magenta planes
 		
 		pos = (80*100) + px;
+
 		asm mov di, [pos]
 		asm mov cx, 8  // 8 loops
 		asm mov si, 80 // +1 Y pixel = +80 bytes
