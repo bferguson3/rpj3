@@ -42,7 +42,7 @@ i += header_len
 need_time_delta = True
 run_status = None
 
-while i < 200:#len(midi):
+while i < len(midi):
     if midi[i:i+4] == b'MTrk':
         tlen = midi[i+4:i+8]
         slen = tlen[0] << 24 | tlen[1] << 16 | tlen[2] << 8 | tlen[3]

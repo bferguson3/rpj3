@@ -7,6 +7,8 @@
 //#include <FSTREAM.H>
 //#include <TIME.H>
 
+#include "rpj3\rooms.h"
+
 extern u16 SB_BASE;
 
 #define CRTC_REG 0x3d4 
@@ -116,34 +118,28 @@ int get_keyboard_input(void)
    {
 	   	if (k == KB_UP)
 	   	{
-			//input1 &= ~(0xf);
 		 	input1 |= BUTTON_UP;
 	    }
 	    else if (k == KB_DOWN)
 	    {
-			//input1 &= ~(0xf);
 			input1 |= BUTTON_DOWN;
 	    }
 	    else if (k == KB_LEFT)
 	    {
-			//input1 &= ~(0xf);
 			input1 |= BUTTON_LEFT;
 	    }
 	    else if (k == KB_RIGHT)
 	    {
-			//input1 &= ~(0xf);
 			input1 |= BUTTON_RIGHT;
 	    }
 	    else if (k == KB_Z)
 	    {
 			
 		    input1 |= BUTTON_A;
-			//input1 &= ~(BUTTON_B);
 	   	}
 	   	else if (k == KB_X)
 	   	{
 			input1 |= BUTTON_B;
-			//input1 &= ~(BUTTON_A);
 	   	}
 	   	else if (k == KB_ESC)
 	   	{
@@ -160,15 +156,22 @@ int get_keyboard_input(void)
 void main(int argc, char* argv[])
 {
 	u16 rambase;
+	s16 i;
+	u8 st, ste;
+
 	asm mov ax,es
 	asm mov [rambase], ax
 
-	// This shouldn't break but we'll see
-	SetVGASegment();
+	// Initialize rooms 
+	for(u8 r = 0; r < 17; r++)
+	{
+		rooms[r].roomName = &roomNames[r];
+		rooms[r].entryDesc = &roomDescriptions[r];
+		rooms[r].searchDesc = &roomSearches[r];
+	}
 
+	SetVGASegment();
 	//printVarSizes();
-	s16 i;
-	u8 st, ste;
 
 	if(argc == 2)
 	{
@@ -201,8 +204,7 @@ void main(int argc, char* argv[])
 		FM_RegWrite(0);
 	}
 
-	
-
+	// Test EGA character
 	imgdata[0] = 0x0;
 	imgdata[1] = 0xff;
 	imgdata[2] = 0;
@@ -210,10 +212,6 @@ void main(int argc, char* argv[])
 	u8* imgloc = &imgdata[0];
 
 	SetVideoMode(0xe);
-	
-	//EGA_WriteByte(320/8, 100, 0xff);
-	// Set destination to 320, 100
-
 
 	// for bitmaps, we need STOSB.
 	// stores AL at [ES:DI], inc d
@@ -232,10 +230,9 @@ void main(int argc, char* argv[])
 	fps = 255;
 	//clock_t start = clock();
 	//clock_t end = 0;
-
 	s16 px,py;
 	px = 40;
-
+	/*
 	// Gets values from HZTOTAL and VRTOTAL as reported by crtc 
 	u8 result_h;
 	u16 result_v;
@@ -262,12 +259,10 @@ void main(int argc, char* argv[])
 
 	if(ovfl & BIT(5)) result_v |= BIT(8);
 	if(ovfl & BIT(0)) result_v |= BIT(9);
-
+	*/
 	while(1)
 	{
-
 		WaitRetrace();
-
 		/*
 		* !!!!!!! MAIN !!!!!!!
 		*/
@@ -276,38 +271,37 @@ void main(int argc, char* argv[])
 		
 		int ink = get_keyboard_input();
 		printf("%c[%dD%c[%dA", 0x1b, 80, 0x1b, 25);
-		movecursor(10, 10);
+		movecursor(0, 11);
 		cout << flush;
-		printf("Hscan: %d\n", result_h);
-		printf("Vscan: %d\n", result_v);
+		//printf("Hscan: %d\n", result_h);
+		//printf("Vscan: %d\n", result_v);
 
 		if(ink == 1)
 			goto _globalquit;
-		printf("Input: ");
-		for(s8 i = 7; i >= 0; i--)
-		{
-			if(input1 & (1 << i)) printf("1");
-			else printf("0");
-		}
-		printf("\nFPS: %d",fps);
+		//printf("Input: ");
+		//for(s8 i = 7; i >= 0; i--)
+		//{
+		//	if(input1 & (1 << i)) printf("1");
+		//	else printf("0");
+		//}
+		//printf("\nFPS: %d",fps);
 		
-		u16 pos = (80*100) + px;
-		
+		printf("%s\n\n%s\n\n%s", *rooms[1].roomName, *rooms[1].entryDesc, *rooms[1].searchDesc);
+
 		if((input1 & BUTTON_RIGHT))
 		{
-			px++;
-			fps++;
+
 		}
 		if((input1 & BUTTON_LEFT))
 		{
-			px--;
+
 		}
 		
+		WaitVBlank();
 		/* 
 		* !!!!!!! DRAW !!!!!
 		*/
-		WaitVBlank();
-
+		
 		SetVGASegment();
 		SetVGABitmask(0xff);  //REset all bits
 		SetVGAPlaneMask(0xf); // of all colors
@@ -344,15 +338,17 @@ void main(int argc, char* argv[])
 			loop _meloop2
 		} // 170 = 0b10101010
 		
-		//start = clock();
-		
+		//start = clock();	
 	}
+
 _globalquit:
 	FM_RegSelect(0xb0);
 	FM_RegWrite(0xc0);
 	asm mov es,[rambase]
 	SetVideoMode(3);
+	// return;
 }
+
 /*
    Channel        1   2   3   4   5   6   7   8   9
    Operator 1    00  01  02  08  09  0A  10  11  12
