@@ -198,7 +198,7 @@ void main(int argc, char* argv[])
 	rooms[13].exit_E = &rooms[14];
 	rooms[14].exit_W = &rooms[13];
 	rooms[15].exit_N = &rooms[12];
-	//rooms[15].exit_E = &rooms[16];
+	rooms[15].exit_E = &rooms[16];
 	rooms[16].exit_W = &rooms[15];
 
 
@@ -347,8 +347,8 @@ void main(int argc, char* argv[])
 
 		if((medicineFound == 1) && (currentRoom == &rooms[1]))
 		{
-			printf("\x1b[HCONGRATULATIONS!\n\n\n\n\n");
-			printf("You give your sister her much-needed medicine just in time.\n");
+			printf("CONGRATULATIONS!\n\n\n\n\n");
+			printf("You give your sister her much-needed medicine just in time.");
 			printf("Hand-in-hand, you head off to find a safe new home.\n\n\n");
 			printf("               THE END  ");
 			while(ink != 0x1c){ ink = get_keyboard_input(); }
@@ -434,9 +434,7 @@ void main(int argc, char* argv[])
 			if(currentRoom == &rooms[11])
 			{
 				powerOff = 1;
-				rooms[11].entryDesc = &room11_desc2;
 				rooms[15].entryDesc = &room15_desc2;
-				rooms[15].exit_E = &rooms[16];
 			}
 			if(currentRoom == &rooms[16])
 			{
@@ -505,7 +503,6 @@ void main(int argc, char* argv[])
 	}
 _globalGameOver:
 	printf("\x1b[H\n\n\n\n    You have starved to death...\n\n       GAME    OVER \n\n\n\n");
-	int d;
 	while(d != 0x1c){ d = get_keyboard_input(); }
 _globalquit:
 	asm mov es,[rambase]
